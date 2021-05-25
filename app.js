@@ -54,6 +54,8 @@ app.post("/Login", (req,res)=>{
                 if (foundUser.password === Password){
                     return res.redirect("dashboard.html")
                 }else{
+                    
+                    //alert("Invalid user or password");
                     return res.redirect("Login.html")
                 }
             }
