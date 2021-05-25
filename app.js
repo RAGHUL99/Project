@@ -42,6 +42,25 @@ app.post("/Signup",(req,res)=>{
 
 })
 
+app.post("/Login", (req,res)=>{
+    var username = req.body.email;
+    var Password = req.body.password;
+
+    db.collection('userDB').findOne({email: username},(err, foundUser)=>{
+        if(err){
+            console.log(err);
+        }else{
+            if (foundUser){
+                if (foundUser.password === Password){
+                    return res.redirect("dashboard.html")
+                }else{
+                    return res.redirect("Login.html")
+                }
+            }
+        }
+    });
+});
+
 
 app.get("/",(req,res)=>{
     res.set({
@@ -50,5 +69,8 @@ app.get("/",(req,res)=>{
     return res.redirect("/Signup.html");
 }).listen(3000);
 
+app.get("/Login",(req, res)=>{
+    res.redirect("/Login.html");
+});
 
 console.log("Listening on PORT 3000");
