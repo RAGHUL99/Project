@@ -42,6 +42,33 @@ app.post("/Signup",(req,res)=>{
 
 })
 
+
+
+app.post("/Designup",(req,res)=>{
+    var name = req.body.name;
+    var email = req.body.email;
+    var password = req.body.password;
+
+    var data = {
+        "name": name,
+        "email" : email,
+        "password" : password
+    }
+
+    db.collection('designDB').insertOne(data,(err,collection)=>{
+        if(err){
+            throw err;
+        }
+        console.log("Record Inserted Successfully");
+    });
+
+    return res.redirect("design.html")
+
+})
+
+
+
+
 app.post("/Login", (req,res)=>{
     var username = req.body.email;
     var Password = req.body.password;
@@ -70,6 +97,10 @@ app.get("/",(req,res)=>{
     })
     return res.redirect("/Signup.html");
 }).listen(3000);
+
+app.get("/Designup",(req, res)=>{
+    res.redirect("/Designup.html");
+});
 
 app.get("/Login",(req, res)=>{
     res.redirect("/Login.html");
