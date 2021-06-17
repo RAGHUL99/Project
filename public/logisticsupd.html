@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<title>Designer Page</title>
+<title>Logistics Update Page</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
@@ -45,7 +45,6 @@ body {
 
 .login-box .user-box {
   position: relative;
-  padding: 20px;
 }
 
 .login-box .user-box input {
@@ -64,7 +63,7 @@ body {
   top:0;
   left: 0;
   padding: 10px 0;
-  font-size: 16px;
+  font-size: 20px;
   color: #fff;
   pointer-events: none;
   transition: .5s;
@@ -75,14 +74,14 @@ body {
   top: -20px;
   left: 0;
   color: #03e9f4;
-  font-size: 12px;
+  font-size: 16px;
 }
 
 .login-box form a {
   position: relative;
   display: inline-block;
   padding: 10px 20px;
-  color: #03e9f4;
+  color: #87cefa;
   font-size: 16px;
   text-decoration: none;
   text-transform: uppercase;
@@ -93,13 +92,13 @@ body {
 }
 
 .login-box a:hover {
-  background: #03e9f4;
+  background: #87cefa;
   color: #fff;
   border-radius: 5px;
-  box-shadow: 0 0 5px #03e9f4,
-              0 0 25px #03e9f4,
-              0 0 50px #03e9f4,
-              0 0 100px #03e9f4;
+  box-shadow: 0 0 5px #87cefa,
+              0 0 25px #87cefa,
+              0 0 50px #87cefa,
+              0 0 100px #87cefa;
 }
 
 .login-box a span {
@@ -188,10 +187,10 @@ body {
 <!-- Navbar (sit on top) -->
 <div class="w3-top">
   <div class="w3-bar w3-white w3-padding w3-card" style="letter-spacing:4px;">
-    <a href="design.html" class="w3-bar-item w3-button"> Designer Page</a>
+    <a href="logisticsupd.html" class="w3-bar-item w3-button"> Logistics Update Page</a>
     <!-- Right-sided navbar links. Hide them on small screens -->
     <div class="w3-right w3-hide-small">
-      <a href="Deslogin.html" class="w3-bar-item w3-button">Sign out</a>
+      <a href="Logisin.html" class="w3-bar-item w3-button">Sign out</a>
       <!-- <a href="Rainfall.html" class="w3-bar-item w3-button">Rainfall<a>
       <a href="Disease.html" class="w3-bar-item w3-button">Disease</a> -->
     </div>
@@ -218,32 +217,25 @@ body {
 
     <div class="w3-col l3 w3-padding-large">
       <div class="login-box">
-  <h2>Designer Page</h2>
-  <form action="/Designer" method="POST">
+  <h2>Logistics Update Page</h2>
+  <form action="/Logisticsupd" method="POST">
     <div class="user-box">
-      <input type="text" name="Oid" required="">
-      <label>Enter the Order ID</label>
-    </div>
-    <div class="user-box">
-      <input type="text" name="DR" required="">
-      <label>Is the design ready?</label>
+      <input type="text" name="PO" required="">
+      <label>Enter the Purchase order</label>
     </div>
      <div class="user-box">
-      <input type="text" name="IS" required="">
-      <label>Invoice Status(Pending/Paid)</label>
+      <input type="text" name="ST" required="">
+      <label>Shipment Tracking</label>
     </div>
-     <div class="user-box">
-      <input type="text" name="BS" required="">
-      <label>Bill Status(Pending/Paid)</label>
-    </div>
-     
+     <br><br>
+   
     <a href="#">
       <!-- <span></span>
       <span></span>
       <span></span>
       <span></span> -->
       
-      <button type="submit" value="submit">Submit </button>
+      <button type="submit" value="submit"> Update </button>
     </a>
     
     </form>
