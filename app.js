@@ -1,6 +1,7 @@
 var express = require("express")
 var bodyParser = require("body-parser")
 var mongoose = require("mongoose")
+var Connection = require('tedious').Connection;
 var sql = require("mssql/msnodesqlv8");
 
 const app = express()
@@ -10,6 +11,22 @@ app.use(express.static('public'))
 app.use(bodyParser.urlencoded({
     extended:true
 }))
+
+var configuration = {  
+    server: 'raghul.database.windows.net',  //update me
+    authentication: {
+        type: 'default',
+        options: {
+            userName: 'rahul', //update me
+            password: 'Password@123'  //update me
+        }
+    },
+    options: {
+        // If you are on Microsoft Azure, you need encryption:
+        encrypt: true,
+        database: 'Back office operations'  //update me
+    }
+};
 
 mongoose.connect('mongodb://localhost:27017/userDB',{
     useNewUrlParser: true,
@@ -98,6 +115,7 @@ app.post("/Login", (req,res)=>{
     db.collection('userDB').findOne({email: username},(err, foundUser)=>{
         if(err){
             console.log(err);
+            res.redirect("Login.html")
         }else{
             if (foundUser){
                 if (foundUser.password === Password){
@@ -120,6 +138,7 @@ app.post("/Logisin", (req,res)=>{
     db.collection('logisticsDB').findOne({email: username},(err, foundUser)=>{
         if(err){
             console.log(err);
+            res.redirect("Logisin.html")
         }else{
             if (foundUser){
                 if (foundUser.password === Password){
@@ -142,6 +161,7 @@ app.post("/Deslogin", (req,res)=>{
     db.collection('designDB').findOne({email: username},(err, foundUser)=>{
         if(err){
             console.log(err);
+            res.redirect("Deslogin.html")
         }else{
             if (foundUser){
                 if (foundUser.password === Password){
@@ -150,7 +170,7 @@ app.post("/Deslogin", (req,res)=>{
                     
                     //alert("Invalid user or password");
                     return res.redirect("Deslogin.html")
-                }
+                }                
             }
         }
     });
@@ -160,141 +180,138 @@ app.post("/Deslogin", (req,res)=>{
 
 
 app.post("/Designer", function (req, res){
-    var sqlConfig = {
-        user: 'rahul', //username created from SQL Management Studio
-        password: 'Test123',
-        server: 'LAPTOP-6A75V5HK',    //the IP of the machine where SQL Server runs
-        port:'1433',
-        driver: 'msnodesqlv8',
-        options: {
-            //instanceName: 'MSSQLSERVER',
-            database: "Back office operations",  //the username above should have granted permissions in order to access this DB.
-            debug: {
-                packet: false,
-                payload: false,
-                token: false,
-                data: false
-            },
-        }
+    // var sqlConfig = {
+    //     user: 'rahul', //username created from SQL Management Studio
+    //     password: 'Password@123',
+    //     server: 'raghul.database.windows.net',    //the IP of the machine where SQL Server runs
+    //     port:'1433',
+    //     driver: 'msnodesqlv8',
+    //     options: {
+    //         //instanceName: 'MSSQLSERVER',
+    //         database: "Back office operations",  //the username above should have granted permissions in order to access this DB.
+    //         debug: {
+    //             packet: false,
+    //             payload: false,
+    //             token: false,
+    //             data: false
+    //         },
+    //     }
     
-    };
+    // };
     function des(){
-        var conn = new sql.ConnectionPool(sqlConfig);
-        var request = new sql.Request(conn);
-
-        conn.connect(function (err){
-            if (err){
-                console.log(err);
-                return;
-            }
-            request.query("Insert into Designer (Order_ID, Design_Status, Invoice_Status, Bill_Status) VALUES ('"+req.body.Oid+"','"+req.body.DR+"','"+req.body.IS+"','"+req.body.BS+"')", function(err, recordset){
-                if (err){
-                    console.log(err);
-                }
-                else{
-                    console.log("1 Field Inserted");
-                    console.log(recordset);
-                    res.redirect("/design.html");
-                }
-                conn.close();
-            });
+        //var request = new sql.Request(conn);
+        var connection = new Connection(configuration);  
+        var Request = require('tedious').Request
+        connection.on('connect', function(err) {  
+        // If no error, then good to proceed.
+        if (err)
+            console.log(err); 
+        else{
+            console.log("Connected");
+            executeStatement1();
+        }
         });
+
+        connection.connect();
+
+        function executeStatement1() {  
+            request = new Request("Insert into [dbo].[Designer] (Order_ID, Design_Status, Invoice_Status, Bill_Status) VALUES ('"+req.body.Oid+"','"+req.body.DR+"','"+req.body.IS+"','"+req.body.BS+"')", function(err) {  
+             if (err) {  
+                console.log(err);} 
+            else{
+                console.log("row inserted successfully");
+                res.redirect("/design.html")
+            } 
+            });
+            request.on("requestCompleted", function (rowCount, more) {
+                connection.close();
+            });
+            connection.execSql(request);  
+        }
+        
     }
     des()
 
 });
 
 app.post("/Logisticsupd", function (req, res){
-    var sqlConfig = {
-        user: 'rahul', //username created from SQL Management Studio
-        password: 'Test123',
-        server: 'LAPTOP-6A75V5HK',    //the IP of the machine where SQL Server runs
-        port:'1433',
-        driver: 'msnodesqlv8',
-        options: {
-            //instanceName: 'MSSQLSERVER',
-            database: "Back office operations",  //the username above should have granted permissions in order to access this DB.
-            debug: {
-                packet: false,
-                payload: false,
-                token: false,
-                data: false
-            },
-        }
-    
-    };
-    function des(){
-        var conn = new sql.ConnectionPool(sqlConfig);
-        var request = new sql.Request(conn);
 
-        conn.connect(function (err){
-            if (err){
-                console.log(err);
-                return;
-            }
-            request.query(("UPDATE Logistics SET Tracking_details = '"+req.body.ST+"' where Order_ID = '"+req.body.PO+"' "), function(err, recordset){
-                if (err){
-                    console.log(err);
-                }
-                else{
-                    console.log("1 Field Updated");
-                    console.log(recordset);
-                    res.redirect("/logisticsupd.html");
-                }
-                conn.close();
-            });
+    function des(){
+        //var request = new sql.Request(conn);
+        var connection = new Connection(configuration);  
+        var Request = require('tedious').Request
+        connection.on('connect', function(err) {  
+        // If no error, then good to proceed.
+        if (err)
+            console.log(err); 
+        else{
+            console.log("Connected");
+            executeStatement1();
+        }
         });
+
+        connection.connect();
+
+        function executeStatement1() {  
+            request = new Request("UPDATE [dbo].[Logistics] SET Tracking_details = '"+req.body.ST+"' where Order_ID = '"+req.body.PO+"' ", function(err) {  
+             if (err) {  
+                console.log(err);} 
+            else{
+                console.log("row inserted successfully");
+                res.redirect("/logisticsupd.html")
+            } 
+            });
+            request.on("requestCompleted", function (rowCount, more) {
+                connection.close();
+            });
+            connection.execSql(request);  
+        }
+        
     }
     des()
 
 });
+    
 
 
 app.post("/Logistics", function (req, res){
-    var sqlConfig = {
-        user: 'rahul', //username created from SQL Management Studio
-        password: 'Test123',
-        server: 'LAPTOP-6A75V5HK',    //the IP of the machine where SQL Server runs
-        port:'1433',
-        driver: 'msnodesqlv8',
-        options: {
-            //instanceName: 'MSSQLSERVER',
-            database: "Back office operations",  //the username above should have granted permissions in order to access this DB.
-            debug: {
-                packet: false,
-                payload: false,
-                token: false,
-                data: false
-            },
-        }
-    
-    };
-    function logistics(){
-        var conn = new sql.ConnectionPool(sqlConfig);
-        var request = new sql.Request(conn);
 
-        conn.connect(function (err){
-            if (err){
-                console.log(err);
-                return;
-            }
-            request.query("Insert into Logistics (Order_ID, Bill_status, Receipt_status, Tracking_details) VALUES ('"+req.body.PO+"','"+req.body.BOG+"','"+req.body.Rec+"','"+req.body.ST+"')", function(err, recordset){
-                if (err){
-                    console.log(err);
-                }
-                else{
-                    console.log("1 Field Inserted");
-                    console.log(recordset);
-                    res.redirect("/logistics.html");
-                }
-                conn.close();
-            });
+    
+    function des(){
+        //var request = new sql.Request(conn);
+        var connection = new Connection(configuration);  
+        var Request = require('tedious').Request
+        connection.on('connect', function(err) {  
+        // If no error, then good to proceed.
+        if (err)
+            console.log(err); 
+        else{
+            console.log("Connected");
+            executeStatement1();
+        }
         });
+
+        connection.connect();
+
+        function executeStatement1() {  
+            request = new Request("Insert into [dbo].[Logistics] (Order_ID, Bill_status, Receipt_status, Tracking_details) VALUES ('"+req.body.PO+"','"+req.body.BOG+"','"+req.body.Rec+"','"+req.body.ST+"')", function(err) {  
+             if (err) {  
+                console.log(err);} 
+            else{
+                console.log("row inserted successfully");
+                res.redirect("/logistics.html")
+            } 
+            });
+            request.on("requestCompleted", function (rowCount, more) {
+                connection.close();
+            });
+            connection.execSql(request);  
+        }
+        
     }
-    logistics()
+    des()
 
 });
-  
 
 
 
